@@ -7,10 +7,18 @@ var logger = require('morgan');
 var { graphqlHTTP } = require('express-graphql');
 var { buildSchema } = require('graphql');
 
+var { Products } = require('./models')
+
 // Construct a schema, using GraphQL schema language
 var schema = buildSchema(`
+  type Product {
+    id: ID!
+    name: String
+  }
+
   type Query {
     hello: String
+    products: [Product]
   }
 `);
 
@@ -19,6 +27,10 @@ var root = {
   hello: () => {
     return 'Hello world!';
   },
+  products: async () => {
+    let products = await Products.findAll()
+    return products
+  }
 };
 
 var app = express();
